@@ -20,6 +20,14 @@
         ol.custom-ol { list-style: decimal; padding-right: 1.5rem; margin-bottom: 1rem; }
         ol.custom-ol li { margin-bottom: 0.5rem; font-weight: bold; }
         ol.custom-ol li span { font-weight: normal; }
+
+        /* Flashcard Styles */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flashcard-content { transition: transform 0.6s; }
+        .flashcard.flipped .flashcard-content { transform: rotateY(180deg); }
     </style>
 </head>
 <body class="leading-relaxed">
@@ -31,7 +39,7 @@
                 <h1 class="text-xl font-black text-green-900">الموسوعة <span class="text-green-600">النباتية</span></h1>
                 
                 <!-- الزر الجديد: يفتح في نفس النافذة -->
-                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition shadow-sm">
+                <a href="https://morophlogyddyen.netlify.app/" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition shadow-sm">
                     موقع الأسئلة
                 </a>
             </div>
@@ -58,7 +66,7 @@
                 <p>الامتحان يحتوي على الكثير من الصور لذا يفضل تذاكرهم من المذاكرة الرئيسية.</p>
             </div>
 
-            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">تلخيص شامل للمنهج كاملاً<br><span class="text-green-600">من صفحة 1 إلى 53</span></h1>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">تلخيص شامل للمنهج كاملاً<br><span class="text-green-600">ادعيلي ان استفدت</span></h1>
             <div class="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full border border-green-200 shadow-sm">
                 <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
                 <span class="font-bold text-green-800">إعداد: عبدالرحمن احمد محمد 780</span>
@@ -435,7 +443,7 @@
                         <div class="p-2 bg-white rounded shadow-sm">رمحي (الدفلة - النعناع)</div>
                         <div class="p-2 bg-white rounded shadow-sm">بيضي (الدورانتا - الملوخية)</div>
                         <div class="p-2 bg-white rounded shadow-sm">بيضاوي (الياسمين الزفر)</div>
-                        <div class="p-2 bg-white rounded shadow-sm">مستطيل (اللبخ)</div>
+                        <div class="p-2 bg-white rounded shadow-sm">mستطيل (اللبخ)</div>
                         <div class="p-2 bg-white rounded shadow-sm">قلبي (المشمش - البطاطا)</div>
                         <div class="p-2 bg-white rounded shadow-sm">ملعقى (الرجلة - الأقحوان)</div>
                         <div class="p-2 bg-white rounded shadow-sm">دائري (البلارجونيم)</div>
@@ -754,6 +762,45 @@
             </div>
         </section>
 
+        <!-- ================= Flashcards Section ================= -->
+        <section id="flashcards" class="section-box">
+            <div class="section-title text-center">بطاقات الاستذكار (Flashcards)</div>
+            <p class="text-center text-gray-600 mb-6">اضغط على البطاقة لقلبها ومشاهدة الإجابة</p>
+            
+            <div class="flex flex-col items-center justify-center">
+                
+                <!-- Card Container -->
+                <div class="relative w-full max-w-md h-64 cursor-pointer perspective-1000 group" onclick="toggleCard(this)">
+                    <div class="flashcard-content relative w-full h-full text-center transition-all duration-500 transform-style-3d shadow-xl rounded-2xl" id="current-card">
+                        
+                        <!-- Front -->
+                        <div class="absolute w-full h-full bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl backface-hidden flex items-center justify-center p-6">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">سؤال / مصطلح</h3>
+                                <p class="text-xl" id="card-question">جاري التحميل...</p>
+                            </div>
+                        </div>
+
+                        <!-- Back -->
+                        <div class="absolute w-full h-full bg-white text-gray-800 rounded-2xl backface-hidden rotate-y-180 flex items-center justify-center p-6 border-2 border-green-500">
+                            <div>
+                                <h3 class="text-xl font-bold text-green-700 mb-2">الإجابة</h3>
+                                <p class="text-lg" id="card-answer">...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex gap-4 mt-8">
+                    <button onclick="prevCard()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full transition">السابق</button>
+                    <span class="flex items-center font-bold text-gray-600" id="card-counter">1 / 10</span>
+                    <button onclick="nextCard()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full transition">التالي</button>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
     <footer class="bg-slate-900 text-slate-300 py-16 text-center border-t-8 border-green-600">
@@ -764,6 +811,82 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        const flashcardsData = [
+            { q: "تعريف البذرة", a: "جزء من النبات يحتوي على جنين صغير في حالة سكون معه غذاء ومحاطة بغلاف للحماية." },
+            { q: "أهمية البذور", a: "وسيلة التكاثر، مصدر غذاء (قمح/أرز)، مصدر زيوت، تستخدم في الصناعات." },
+            { q: "مكونات الجنين (Embryo)", a: "الريشة (للساق)، الجذير (للجذر)، الفلقة/الفلقتين (مخزن الغذاء)." },
+            { q: "النقير (Micropyle)", a: "فتحة في غلاف البذرة يدخل منها الماء لبدء الإنبات." },
+            { q: "الإنبات الأرضي (Hypogeal)", a: "تبقى الفلقتان تحت سطح التربة (مثل الذرة)." },
+            { q: "الإنبات الهوائي (Epigeal)", a: "ترتفع الفلقتان فوق سطح التربة (مثل الفاصوليا)." },
+            { q: "العوامل البيئية للإنبات", a: "الماء، الحرارة (20-30)، الأكسجين، الضوء." },
+            { q: "انتشار البذور بالرياح", a: "بذور خفيفة، لها أجنحة أو شعيرات (مثل القطن والهندباء)." },
+            { q: "وظائف الجذر", a: "تثبيت النبات، امتصاص الماء، تخزين الغذاء، التنفس." },
+            { q: "مناطق الجذر", a: "القلنسوة، القمة النامية، الاستطالة، الشعيرات الجذرية، المنطقة الدائمة." },
+            { q: "الجذور الأصلية (الوتدية)", a: "تنشأ من الجذير مباشرة (مثل القطن والطماطم)." },
+            { q: "جذر وتدي مخروطي", a: "مثل الجزر." },
+            { q: "جذور هوائية", a: "جذور عرضية مثل التين البنغالي." },
+            { q: "الساق الجارية", a: "ساق هوائية أفقية فوق الأرض (مثل الفراولة)." },
+            { q: "الريزوم", a: "ساق أرضية أفقية تحت التربة (مثل الزنجبيل)." },
+            { q: "الدرنة", a: "ساق أرضية متضخمة عليها براعم (مثل البطاطس)." },
+            { q: "تعريف البراعم", a: "قمة قصيرة تحتوي خلايا مرستيمية ومحاطة بأوراق حرشفية." },
+            { q: "التعريق الشبكي", a: "يوجد في أوراق ذوات الفلقتين." },
+            { q: "أوراق نبات الإبريق", a: "تتحور لتكون إبريق به مادة هاضمة لصيد الحشرات." },
+            { q: "الجدار الخلوي", a: "يمنح الشكل الثابت والحماية، يتكون من سليلوز ولجنين." },
+            { q: "الميتوكوندريا", a: "عضي مسؤول عن التنفس وإنتاج الطاقة." },
+            { q: "البلاستيدات الخضراء", a: "مسؤولة عن البناء الضوئي." },
+            { q: "نسيج الخشب (Xylem)", a: "ينقل الماء والأملاح." },
+            { q: "شريط كاسبار", a: "يوجد في الإندودرم بالجذر لمنع مرور الماء بين الخلايا." },
+            { q: "الفرق بين جذر وساق ذوات الفلقتين", a: "الجذر: خشب ولحاء متبادل. الساق: خشب ولحاء على نفس القطر." },
+            { q: "النباتات الصحراوية (Xerophytes)", a: "أوراق صغيرة، ثغور غائرة، بشرة سميكة (مثل الكالوبوترا)." }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.querySelector('.flashcard-content');
+        const questionEl = document.getElementById('card-question');
+        const answerEl = document.getElementById('card-answer');
+        const counterEl = document.getElementById('card-counter');
+
+        function updateCard() {
+            // Reset flip
+            cardElement.parentElement.classList.remove('flipped');
+            
+            // Small timeout to allow flip reset before changing text
+            setTimeout(() => {
+                questionEl.textContent = flashcardsData[currentIndex].q;
+                answerEl.textContent = flashcardsData[currentIndex].a;
+                counterEl.textContent = `${currentIndex + 1} / ${flashcardsData.length}`;
+            }, 150);
+        }
+
+        function toggleCard(element) {
+            element.classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (currentIndex < flashcardsData.length - 1) {
+                currentIndex++;
+                updateCard();
+            } else {
+                currentIndex = 0; // Loop back to start
+                updateCard();
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            } else {
+                currentIndex = flashcardsData.length - 1; // Loop to end
+                updateCard();
+            }
+        }
+
+        // Initialize
+        updateCard();
+    </script>
 
 </body>
 </html>
